@@ -11,10 +11,14 @@ export default function DriversPage() {
   const [selected, setSelected] = useState<Driver | null>(null);
   const [lastSessionKey, setLastSessionKey] = useState<number | undefined>();
   const [search, setSearch] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([getDriversClient(2026), getRacesClient(2026)]).then(
-      ([allDrivers, races]) => {
+    let mounted = true;
+
+    Promise.all([getDriversClient(2026), getRacesClient(2026)])
+      .then(([allDrivers, races]) => {
+        if (!mounted) return;
         const sorted = [...allDrivers].sort((a, b) => {
           const orderA = TEAM_ORDER[a.team_name] ?? 99;
           const orderB = TEAM_ORDER[b.team_name] ?? 99;
@@ -24,8 +28,20 @@ export default function DriversPage() {
         if (races.length > 0) {
           setLastSessionKey(races[races.length - 1].session_key);
         }
-      }
-    );
+      })
+      .catch((err: unknown) => {
+        if (!mounted) return;
+        if (err instanceof Error && err.message === "OPENF1_RESTRICTED") {
+          setError("OpenF1 API is restricted during live sessions. Try again later.");
+        } else {
+          console.error("Failed to load drivers:", err);
+          setError("Failed to load drivers. Please try again.");
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const filtered = drivers.filter((d) => {
@@ -76,7 +92,11 @@ export default function DriversPage() {
       {/* Grid */}
       
       {/* Grid */}
-      {drivers.length === 0 ? (
+      {error ? (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+          <p className="text-yellow-400 text-sm">{error}</p>
+        </div>
+      ) : drivers.length === 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="h-56 bg-[#0d0d0d] rounded-2xl animate-pulse" />

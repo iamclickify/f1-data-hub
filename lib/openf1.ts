@@ -93,6 +93,7 @@ export async function getDriversClient(year: number = 2026): Promise<Driver[]> {
     const sessionsRes = await fetch(
       `/api/openf1?path=sessions&year=${year}&session_type=Race`
     );
+    if (sessionsRes.status === 401) throw new Error("OPENF1_RESTRICTED");
     if (!sessionsRes.ok) return [];
 
     const sessions: Race[] = await sessionsRes.json();
@@ -105,10 +106,12 @@ export async function getDriversClient(year: number = 2026): Promise<Driver[]> {
     const driversRes = await fetch(
       `/api/openf1?path=drivers&session_key=${lastSession.session_key}`
     );
+    if (driversRes.status === 401) throw new Error("OPENF1_RESTRICTED");
     if (!driversRes.ok) return [];
 
     return await driversRes.json();
-  } catch {
+  } catch (err: unknown) {
+    if (err instanceof Error && err.message === "OPENF1_RESTRICTED") throw err;
     return [];
   }
 }
@@ -159,9 +162,11 @@ export async function getRacesClient(year: number = 2026): Promise<Race[]> {
     const res = await fetch(
       `/api/openf1?path=sessions&year=${year}&session_type=Race`
     );
+    if (res.status === 401) throw new Error("OPENF1_RESTRICTED");
     if (!res.ok) return [];
     return await res.json();
-  } catch {
+  } catch (err: unknown) {
+    if (err instanceof Error && err.message === "OPENF1_RESTRICTED") throw err;
     return [];
   }
 }
