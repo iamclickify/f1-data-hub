@@ -306,3 +306,26 @@ export async function getConstructorStandings(year: number): Promise<{
     return [];
   }
 }
+
+export async function getQualifyingResults(
+  year: number,
+  round: string
+): Promise<{
+  position: string;
+  Driver: { givenName: string; familyName: string; nationality: string };
+  Constructor: { name: string };
+  Q1: string;
+  Q2: string;
+  Q3: string;
+}[]> {
+  try {
+    const res = await fetch(
+      `https://api.jolpi.ca/ergast/f1/${year}/${round}/qualifying.json`
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data?.MRData?.RaceTable?.Races?.[0]?.QualifyingResults ?? [];
+  } catch {
+    return [];
+  }
+}

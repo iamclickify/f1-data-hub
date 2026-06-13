@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getSeasonRaces, getRaceResults } from "@/lib/openf1";
+import {
+  getSeasonRaces,
+  getRaceResults,
+  getQualifyingResults,
+} from "@/lib/openf1";
 
 type Race = {
   round: string;
@@ -13,7 +17,7 @@ type Race = {
   date: string;
 };
 
-type Result = {
+type RaceResult = {
   position: string;
   Driver: { givenName: string; familyName: string };
   Constructor: { name: string };
@@ -22,6 +26,15 @@ type Result = {
   grid: string;
   points: string;
   status: string;
+};
+
+type QualiResult = {
+  position: string;
+  Driver: { givenName: string; familyName: string };
+  Constructor: { name: string };
+  Q1: string;
+  Q2: string;
+  Q3: string;
 };
 
 const CURRENT_YEAR = 2026;
@@ -35,16 +48,20 @@ export default function RacesPage() {
   const [selectedYear, setSelectedYear] = useState(CURRENT_YEAR);
   const [races, setRaces] = useState<Race[]>([]);
   const [selectedRace, setSelectedRace] = useState<Race | null>(null);
-  const [results, setResults] = useState<Result[]>([]);
+  const [activeTab, setActiveTab] = useState<"race" | "qualifying">("race");
+  const [raceResults, setRaceResults] = useState<RaceResult[]>([]);
+  const [qualiResults, setQualiResults] = useState<QualiResult[]>([]);
   const [loadingRaces, setLoadingRaces] = useState(false);
   const [loadingResults, setLoadingResults] = useState(false);
 
+  // Load races when year changes
   useEffect(() => {
     const load = async () => {
       setLoadingRaces(true);
       setRaces([]);
       setSelectedRace(null);
-      setResults([]);
+      setRaceResults([]);
+      setQualiResults([]);
       const data = await getSeasonRaces(selectedYear);
       setRaces(data);
       setLoadingRaces(false);
@@ -52,17 +69,24 @@ export default function RacesPage() {
     load();
   }, [selectedYear]);
 
+  // Load results when race or tab changes
   useEffect(() => {
     if (!selectedRace) return;
     const load = async () => {
       setLoadingResults(true);
-      setResults([]);
-      const data = await getRaceResults(selectedYear, selectedRace.round);
-      setResults(data);
+      if (activeTab === "race") {
+        setRaceResults([]);
+        const data = await getRaceResults(selectedYear, selectedRace.round);
+        setRaceResults(data);
+      } else {
+        setQualiResults([]);
+        const data = await getQualifyingResults(selectedYear, selectedRace.round);
+        setQualiResults(data);
+      }
       setLoadingResults(false);
     };
     load();
-  }, [selectedRace, selectedYear]);
+  }, [selectedRace, selectedYear, activeTab]);
 
   return (
     <main className="max-w-7xl mx-auto px-6 py-12">
@@ -80,7 +104,7 @@ export default function RacesPage() {
           </span>
         </h1>
         <p className="text-gray-500">
-          Browse race results from every Formula 1 season since 1950.
+          Browse race and qualifying results from every Formula 1 season since 1950.
         </p>
       </div>
 
@@ -91,7 +115,10 @@ export default function RacesPage() {
         </label>
         <select
           value={selectedYear}
-          onChange={(e) => setSelectedYear(Number(e.target.value))}
+          onChange={(e) => {
+            setSelectedYear(Number(e.target.value));
+            setActiveTab("race");
+          }}
           className="bg-[#0d0d0d] border border-white/10 focus:border-white/30 text-white rounded-lg px-4 py-2.5 outline-none transition-colors text-sm"
         >
           {years.map((y) => (
@@ -128,7 +155,10 @@ export default function RacesPage() {
                 return (
                   <button
                     key={race.round}
-                    onClick={() => setSelectedRace(race)}
+                    onClick={() => {
+                      setSelectedRace(race);
+                      setActiveTab("race");
+                    }}
                     className={`w-full text-left px-4 py-3 rounded-xl border transition-all duration-200 ${
                       isSelected
                         ? "border-f1red/50 bg-f1red/10 text-white"
@@ -142,7 +172,11 @@ export default function RacesPage() {
                       </span>
                     </div>
                     <p className="text-xs opacity-50 mt-0.5">
-                      {race.Circuit.Location.country} · {new Date(race.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                      {race.Circuit.Location.country} ·{" "}
+                      {new Date(race.date).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                      })}
                     </p>
                   </button>
                 );
@@ -161,7 +195,7 @@ export default function RacesPage() {
             <>
               {/* Race header */}
               <div className="bg-[#0d0d0d] border border-white/5 rounded-2xl p-5 mb-4">
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between mb-4">
                   <div>
                     <p className="text-gray-600 text-xs uppercase tracking-widest mb-1">
                       Round {selectedRace.round} · {selectedYear}
@@ -170,7 +204,9 @@ export default function RacesPage() {
                       {selectedRace.raceName}
                     </h2>
                     <p className="text-gray-500 text-sm mt-1">
-                      {selectedRace.Circuit.circuitName} · {selectedRace.Circuit.Location.locality}, {selectedRace.Circuit.Location.country}
+                      {selectedRace.Circuit.circuitName} ·{" "}
+                      {selectedRace.Circuit.Location.locality},{" "}
+                      {selectedRace.Circuit.Location.country}
                     </p>
                   </div>
                   <p className="text-gray-600 text-sm">
@@ -181,6 +217,30 @@ export default function RacesPage() {
                     })}
                   </p>
                 </div>
+
+                {/* Tab switcher */}
+                <div className="flex bg-black/30 rounded-lg p-1 gap-1 w-fit">
+                  <button
+                    onClick={() => setActiveTab("race")}
+                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                      activeTab === "race"
+                        ? "bg-f1red text-white"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    Race Result
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("qualifying")}
+                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                      activeTab === "qualifying"
+                        ? "bg-f1red text-white"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    Qualifying
+                  </button>
+                </div>
               </div>
 
               {/* Results table */}
@@ -190,80 +250,130 @@ export default function RacesPage() {
                     <div key={i} className="h-12 bg-[#0d0d0d] rounded-xl animate-pulse" />
                   ))}
                 </div>
-              ) : results.length === 0 ? (
-                <div className="text-center py-16 border border-white/5 rounded-2xl">
-                  <p className="text-gray-600">No results available yet.</p>
-                </div>
-              ) : (
-                <div className="bg-[#0d0d0d] border border-white/5 rounded-2xl overflow-hidden">
-                  {/* Table header */}
-                  <div className="grid grid-cols-12 px-5 py-3 text-gray-600 text-xs uppercase tracking-wider border-b border-white/5">
-                    <span className="col-span-1">Pos</span>
-                    <span className="col-span-4">Driver</span>
-                    <span className="col-span-3">Team</span>
-                    <span className="col-span-2">Time</span>
-                    <span className="col-span-1 text-center">Grid</span>
-                    <span className="col-span-1 text-right">Pts</span>
+              ) : activeTab === "race" ? (
+
+                /* Race results */
+                raceResults.length === 0 ? (
+                  <div className="text-center py-16 border border-white/5 rounded-2xl">
+                    <p className="text-gray-600">No results available yet.</p>
                   </div>
-
-                  {/* Rows */}
-                  {results.map((result, index) => {
-                    const pos = parseInt(result.position);
-                    const didFinish = result.status === "Finished" || result.status.includes("Lap");
-                    const posColor =
-                      pos === 1 ? "#F59E0B" :
-                      pos === 2 ? "#9CA3AF" :
-                      pos === 3 ? "#C89B3C" :
-                      "#4B5563";
-
-                    return (
-                      <div
-                        key={index}
-                        className={`grid grid-cols-12 px-5 py-3.5 text-sm border-b border-white/5 last:border-0 transition-colors hover:bg-white/2 ${
-                          pos === 1 ? "bg-yellow-500/3" : ""
-                        }`}
-                      >
-                        {/* Position */}
-                        <span
-                          className="col-span-1 font-black text-base"
-                          style={{ color: posColor }}
+                ) : (
+                  <div className="bg-[#0d0d0d] border border-white/5 rounded-2xl overflow-hidden">
+                    <div className="grid grid-cols-12 px-5 py-3 text-gray-600 text-xs uppercase tracking-wider border-b border-white/5">
+                      <span className="col-span-1">Pos</span>
+                      <span className="col-span-4">Driver</span>
+                      <span className="col-span-3">Team</span>
+                      <span className="col-span-2">Time</span>
+                      <span className="col-span-1 text-center">Grid</span>
+                      <span className="col-span-1 text-right">Pts</span>
+                    </div>
+                    {raceResults.map((result, index) => {
+                      const pos = parseInt(result.position);
+                      const didFinish =
+                        result.status === "Finished" ||
+                        result.status.includes("Lap");
+                      const posColor =
+                        pos === 1 ? "#F59E0B" :
+                        pos === 2 ? "#9CA3AF" :
+                        pos === 3 ? "#C89B3C" :
+                        "#4B5563";
+                      return (
+                        <div
+                          key={index}
+                          className={`grid grid-cols-12 px-5 py-3.5 text-sm border-b border-white/5 last:border-0 hover:bg-white/2 ${
+                            pos === 1 ? "bg-yellow-500/3" : ""
+                          }`}
                         >
-                          {result.position}
-                        </span>
+                          <span className="col-span-1 font-black text-base" style={{ color: posColor }}>
+                            {result.position}
+                          </span>
+                          <span className="col-span-4 text-white font-semibold flex items-center gap-1.5">
+                            {result.Driver.givenName[0]}. {result.Driver.familyName}
+                            {result.FastestLap?.rank === "1" && (
+                              <span className="text-purple-400 text-xs">⚡</span>
+                            )}
+                          </span>
+                          <span className="col-span-3 text-gray-500 text-xs self-center">
+                            {result.Constructor.name}
+                          </span>
+                          <span className="col-span-2 text-gray-500 text-xs self-center">
+                            {didFinish ? result.Time?.time ?? "—" : result.status}
+                          </span>
+                          <span className="col-span-1 text-gray-600 text-xs text-center self-center">
+                            {result.grid === "0" ? "PL" : result.grid}
+                          </span>
+                          <span className={`col-span-1 text-right font-bold self-center ${
+                            Number(result.points) > 0 ? "text-f1gold" : "text-gray-700"
+                          }`}>
+                            {result.points}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )
 
-                        {/* Driver */}
-                        <span className="col-span-4 text-white font-semibold flex items-center gap-1.5">
-                          {result.Driver.givenName[0]}. {result.Driver.familyName}
-                          {result.FastestLap?.rank === "1" && (
-                            <span className="text-purple-400 text-xs">⚡</span>
-                          )}
-                        </span>
+              ) : (
 
-                        {/* Team */}
-                        <span className="col-span-3 text-gray-500 text-xs self-center">
-                          {result.Constructor.name}
-                        </span>
-
-                        {/* Time */}
-                        <span className="col-span-2 text-gray-500 text-xs self-center">
-                          {didFinish ? result.Time?.time ?? "—" : result.status}
-                        </span>
-
-                        {/* Grid */}
-                        <span className="col-span-1 text-gray-600 text-xs text-center self-center">
-                          {result.grid === "0" ? "PL" : result.grid}
-                        </span>
-
-                        {/* Points */}
-                        <span className={`col-span-1 text-right font-bold self-center ${
-                          Number(result.points) > 0 ? "text-f1gold" : "text-gray-700"
-                        }`}>
-                          {result.points}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
+                /* Qualifying results */
+                qualiResults.length === 0 ? (
+                  <div className="text-center py-16 border border-white/5 rounded-2xl">
+                    <p className="text-gray-600">No qualifying data available.</p>
+                    {selectedYear < 1994 && (
+                      <p className="text-gray-700 text-xs mt-2">
+                        Detailed qualifying data may not exist for seasons before 1994.
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="bg-[#0d0d0d] border border-white/5 rounded-2xl overflow-hidden">
+                    <div className="grid grid-cols-12 px-5 py-3 text-gray-600 text-xs uppercase tracking-wider border-b border-white/5">
+                      <span className="col-span-1">Pos</span>
+                      <span className="col-span-3">Driver</span>
+                      <span className="col-span-3">Team</span>
+                      <span className="col-span-2 text-center">Q1</span>
+                      <span className="col-span-2 text-center">Q2</span>
+                      <span className="col-span-1 text-right">Q3</span>
+                    </div>
+                    {qualiResults.map((result, index) => {
+                      const pos = parseInt(result.position);
+                      const posColor =
+                        pos === 1 ? "#F59E0B" :
+                        pos === 2 ? "#9CA3AF" :
+                        pos === 3 ? "#C89B3C" :
+                        "#4B5563";
+                      return (
+                        <div
+                          key={index}
+                          className={`grid grid-cols-12 px-5 py-3.5 text-sm border-b border-white/5 last:border-0 hover:bg-white/2 ${
+                            pos === 1 ? "bg-yellow-500/3" : ""
+                          }`}
+                        >
+                          <span className="col-span-1 font-black text-base" style={{ color: posColor }}>
+                            {result.position}
+                          </span>
+                          <span className="col-span-3 text-white font-semibold">
+                            {result.Driver.givenName[0]}. {result.Driver.familyName}
+                          </span>
+                          <span className="col-span-3 text-gray-500 text-xs self-center">
+                            {result.Constructor.name}
+                          </span>
+                          <span className="col-span-2 text-center text-gray-400 text-xs self-center font-mono">
+                            {result.Q1 || "—"}
+                          </span>
+                          <span className="col-span-2 text-center text-gray-400 text-xs self-center font-mono">
+                            {result.Q2 || "—"}
+                          </span>
+                          <span className={`col-span-1 text-right text-xs self-center font-mono font-bold ${
+                            pos === 1 ? "text-f1gold" : "text-gray-400"
+                          }`}>
+                            {result.Q3 || "—"}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )
               )}
             </>
           )}
