@@ -52,7 +52,7 @@ export default function HomePage() {
 
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-8">
-            <span className="w-2 h-2 bg-[#E8002D] rounded-full animate-pulse" />
+            <span className="w-2 h-2 bg-f1red rounded-full animate-pulse" />
             <span className="text-gray-400 text-sm font-medium">
               2026 Season Live
             </span>
@@ -83,7 +83,7 @@ export default function HomePage() {
           <div className="flex flex-wrap gap-4">
             <Link
               href="/drivers"
-              className="bg-[#E8002D] hover:bg-[#c8001f] text-white font-semibold px-8 py-3 rounded-lg transition-colors"
+              className="bg-f1red hover:bg-[#c8001f] text-white font-semibold px-8 py-3 rounded-lg transition-colors"
             >
               Explore Drivers
             </Link>
@@ -123,7 +123,7 @@ export default function HomePage() {
       {/* What is F1 */}
       <section className="mb-24">
         <div className="flex items-center gap-4 mb-10">
-          <div className="w-1 h-8 bg-[#C89B3C] rounded-full" />
+          <div className="w-1 h-8 bg-f1gold rounded-full" />
           <h2 className="text-white text-3xl font-bold">What is Formula 1?</h2>
         </div>
 
@@ -157,7 +157,7 @@ export default function HomePage() {
       {/* Feature cards */}
       <section className="mb-24">
         <div className="flex items-center gap-4 mb-10">
-          <div className="w-1 h-8 bg-[#E8002D] rounded-full" />
+          <div className="w-1 h-8 bg-f1red rounded-full" />
           <h2 className="text-white text-3xl font-bold">Explore F1 Data</h2>
         </div>
 
@@ -174,7 +174,7 @@ export default function HomePage() {
                   →
                 </span>
               </div>
-              <h3 className="text-white font-bold text-xl mb-2 group-hover:text-[#C89B3C] transition-colors">
+              <h3 className="text-white font-bold text-xl mb-2 group-hover:text-f1gold transition-colors">
                 {feature.title}
               </h3>
               <p className="text-gray-500 text-sm leading-relaxed">

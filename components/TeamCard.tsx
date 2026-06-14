@@ -1,44 +1,49 @@
+"use client";
+
 import Image from "next/image";
 import { TeamInfo } from "@/data/teams";
+import { addFavorite, removeFavorite, isFavorite } from "@/lib/favorites";
 import { useState } from "react";
-import { isFavorite, addFavorite, removeFavorite } from "@/lib/favorites";
 
 export default function TeamCard({ team }: { team: TeamInfo }) {
-  const [favorite, setFavorite] = useState(
-    () => isFavorite("team", team.name)
-  );
+
+
+  const [faved, setFaved] = useState(() =>
+  isFavorite("team", team.name)
+);
 
   const toggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (favorite) {
+    if (faved) {
       removeFavorite("team", team.name);
-      setFavorite(false);
     } else {
       addFavorite({
         type: "team",
         id: team.name,
         name: team.name,
       });
-      setFavorite(true);
     }
+    setFaved(!faved);
   };
 
   return (
-    <div className="relative bg-[#0d0d0d] border border-white/5 hover:border-white/20 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 group cursor-pointer">
+    <div className="bg-[#0d0d0d] border border-white/5 hover:border-white/20 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 group cursor-pointer relative">
 
-      {/* Favorite button */}
+      {/* Heart button */}
       <button
         onClick={toggleFavorite}
-        className="absolute top-3 right-3 z-10 w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-        title={favorite ? "Remove from favorites" : "Add to favorites"}
+        className="absolute top-3 right-3 z-10 w-7 h-7 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/70 transition-all"
+        title={faved ? "Remove from favorites" : "Add to favorites"}
       >
-        {favorite ? "❤️" : "🤍"}
+        <span className={`text-sm transition-all ${faved ? "text-red-500" : "text-gray-600 hover:text-gray-400"}`}>
+          {faved ? "♥" : "♡"}
+        </span>
       </button>
 
       <div className="h-0.5 w-full" style={{ backgroundColor: team.color }} />
 
       <div className="p-6">
-        {/* Logo or fallback abbreviation */}
+        {/* Logo or fallback */}
         <div
           className="w-14 h-14 rounded-xl flex items-center justify-center mb-5 overflow-hidden"
           style={{
