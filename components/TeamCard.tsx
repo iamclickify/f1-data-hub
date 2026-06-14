@@ -32,7 +32,7 @@ export default function TeamCard({ team }: { team: TeamInfo }) {
       {/* Heart button */}
       <button
         onClick={toggleFavorite}
-        className="absolute top-3 right-3 z-10 w-7 h-7 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/70 transition-all"
+        className="absolute top-3 right-3 z-20 w-7 h-7 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/70 transition-all"
         title={faved ? "Remove from favorites" : "Add to favorites"}
       >
         <span className={`text-sm transition-all ${faved ? "text-red-500" : "text-gray-600 hover:text-gray-400"}`}>

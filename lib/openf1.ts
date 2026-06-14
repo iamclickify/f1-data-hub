@@ -101,7 +101,7 @@ export async function getDriversClient(year: number = 2026): Promise<Driver[]> {
 
     const lastSession = sessions[sessions.length - 1];
 
-    await sleep(300);
+    await sleep(1000); // Small delay to reduce chance of hitting rate limits
 
     const driversRes = await fetch(
       `/api/openf1?path=drivers&session_key=${lastSession.session_key}`

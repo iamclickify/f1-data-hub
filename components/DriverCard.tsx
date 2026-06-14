@@ -34,10 +34,14 @@ const [faved, setFaved] = useState(() =>
       {/* Heart button */}
       <button
         onClick={toggleFavorite}
-        className="absolute top-3 right-3 z-10 w-7 h-7 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/70 transition-all"
+        className="absolute top-2 right-2 z-20 w-8 h-8 flex items-center justify-center rounded-full transition-all"
+        style={{
+          backgroundColor: faved ? "#E8002D22" : "rgba(0,0,0,0.6)",
+          border: faved ? "1px solid #E8002D60" : "1px solid rgba(255,255,255,0.1)",
+        }}
         title={faved ? "Remove from favorites" : "Add to favorites"}
       >
-        <span className={`text-sm transition-all ${faved ? "text-red-500" : "text-gray-600 hover:text-gray-400"}`}>
+        <span className={`text-base transition-all ${faved ? "text-red-500" : "text-gray-400"}`}>
           {faved ? "♥" : "♡"}
         </span>
       </button>

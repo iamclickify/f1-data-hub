@@ -76,7 +76,7 @@ export default function FavoritesPage() {
           <div className="flex gap-3">
             <Link
               href="/drivers"
-              className="px-6 py-2.5 bg-[#E8002D] hover:bg-[#c8001f] text-white rounded-lg font-semibold transition-colors text-sm"
+              className="px-6 py-2.5 bg-f1red hover:bg-[#c8001f] text-white rounded-lg font-semibold transition-colors text-sm"
             >
               Browse Drivers
             </Link>
@@ -96,7 +96,7 @@ export default function FavoritesPage() {
           {favoriteDrivers.length > 0 && (
             <section>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-1 h-6 bg-[#E8002D] rounded-full" />
+                <div className="w-1 h-6 bg-f1red rounded-full" />
                 <h2 className="text-white text-xl font-black">Drivers</h2>
                 <span className="text-gray-600 text-sm">
                   {favoriteDrivers.length} saved
@@ -119,7 +119,7 @@ export default function FavoritesPage() {
           {favoriteTeams.length > 0 && (
             <section>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-1 h-6 bg-[#C89B3C] rounded-full" />
+                <div className="w-1 h-6 bg-f1gold rounded-full" />
                 <h2 className="text-white text-xl font-black">Teams</h2>
                 <span className="text-gray-600 text-sm">
                   {favoriteTeams.length} saved
