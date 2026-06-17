@@ -77,7 +77,6 @@ useEffect(() => {
 
   return (
     <main className="max-w-5xl mx-auto px-6 py-12">
-
       {/* Header */}
       <div className="mb-10">
         <h1 className="text-4xl font-black text-white mb-3">
@@ -91,7 +90,6 @@ useEffect(() => {
           Select two drivers to compare their career statistics head-to-head.
         </p>
       </div>
-
       {/* Driver selectors */}
       <div className="grid grid-cols-2 gap-6 mb-10">
         {/* Driver A */}
@@ -138,7 +136,6 @@ useEffect(() => {
           </select>
         </div>
       </div>
-
       {/* Comparison area */}
       {!driverA && !driverB ? (
         <div className="text-center py-24 border border-white/5 rounded-2xl">
@@ -168,7 +165,10 @@ useEffect(() => {
                           height={120}
                           className="object-contain mx-auto mb-3"
                           unoptimized
-                        />
+                          style={{
+                            maxWidth: "100%",
+                            height: "auto"
+                          }} />
                       )}
                       <p className="text-gray-500 font-mono text-sm">
                         #{side.driver.driver_number}

@@ -30,7 +30,6 @@ const [faved, setFaved] = useState(() =>
 
   return (
     <div className="bg-[#0d0d0d] border border-white/5 hover:border-white/20 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 group cursor-pointer relative">
-
       {/* Heart button */}
       <button
         onClick={toggleFavorite}
@@ -45,10 +44,8 @@ const [faved, setFaved] = useState(() =>
           {faved ? "♥" : "♡"}
         </span>
       </button>
-
       {/* Team color bar */}
       <div className="h-0.5 w-full" style={{ backgroundColor: teamColor }} />
-
       {/* Driver image area */}
       <div
         className="flex justify-center pt-5 pb-2 relative"
@@ -65,14 +62,16 @@ const [faved, setFaved] = useState(() =>
             className="object-contain relative z-10 w-auto h-auto"
             loading="eager"
             unoptimized
-          />
+            style={{
+              maxWidth: "100%",
+              height: "auto"
+            }} />
         ) : (
           <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center text-4xl">
             👤
           </div>
         )}
       </div>
-
       {/* Driver info */}
       <div className="px-4 pb-5 text-center">
         <p className="text-gray-600 font-mono text-xs mb-1">
@@ -85,7 +84,6 @@ const [faved, setFaved] = useState(() =>
           {driver.team_name}
         </p>
       </div>
-
     </div>
   );
 }

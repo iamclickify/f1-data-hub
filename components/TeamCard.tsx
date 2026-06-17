@@ -28,7 +28,6 @@ export default function TeamCard({ team }: { team: TeamInfo }) {
 
   return (
     <div className="bg-[#0d0d0d] border border-white/5 hover:border-white/20 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 group cursor-pointer relative">
-
       {/* Heart button */}
       <button
         onClick={toggleFavorite}
@@ -39,9 +38,7 @@ export default function TeamCard({ team }: { team: TeamInfo }) {
           {faved ? "♥" : "♡"}
         </span>
       </button>
-
       <div className="h-0.5 w-full" style={{ backgroundColor: team.color }} />
-
       <div className="p-6">
         {/* Logo or fallback */}
         <div
@@ -58,7 +55,10 @@ export default function TeamCard({ team }: { team: TeamInfo }) {
               width={48}
               height={48}
               className="object-contain p-1"
-            />
+              style={{
+                maxWidth: "100%",
+                height: "auto"
+              }} />
           ) : (
             <span
               className="text-sm font-black tracking-wider"
@@ -90,7 +90,6 @@ export default function TeamCard({ team }: { team: TeamInfo }) {
           </div>
         </div>
       </div>
-
     </div>
   );
 }

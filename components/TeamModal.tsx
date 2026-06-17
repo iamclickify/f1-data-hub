@@ -76,7 +76,10 @@ export default function TeamModal({ team, drivers, onClose }: Props) {
                   width={64}
                   height={64}
                   className="object-contain p-1.5"
-                />
+                  style={{
+                    maxWidth: "100%",
+                    height: "auto"
+                  }} />
               ) : (
                 <span
                   className="text-lg font-black tracking-wider"
@@ -115,7 +118,10 @@ export default function TeamModal({ team, drivers, onClose }: Props) {
                 width={400}
                 height={112}
                 className="object-contain w-full h-full p-2"
-              />
+                style={{
+                  maxWidth: "100%",
+                  height: "auto"
+                }} />
             ) : (
               <p className="text-gray-700 text-xs">Car image coming soon</p>
             )}
@@ -164,7 +170,10 @@ export default function TeamModal({ team, drivers, onClose }: Props) {
                         height={44}
                         className="object-contain shrink-0"
                         unoptimized
-                      />
+                        style={{
+                          maxWidth: "100%",
+                          height: "auto"
+                        }} />
                     )}
                     <div className="min-w-0">
                       <p className="text-white font-semibold text-sm truncate">

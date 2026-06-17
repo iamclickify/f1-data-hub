@@ -42,7 +42,6 @@ export default function FavoritesPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-6 py-12">
-
       {/* Header */}
       <div className="mb-10">
         <h1 className="text-4xl font-black text-white mb-3">
@@ -59,7 +58,6 @@ export default function FavoritesPage() {
           Your saved drivers and teams. Click ♥ on any card to add or remove.
         </p>
       </div>
-
       {loading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
@@ -69,7 +67,7 @@ export default function FavoritesPage() {
       ) : favorites.length === 0 ? (
 
         /* Empty state */
-        <div className="flex flex-col items-center justify-center py-24 border border-white/5 rounded-2xl">
+        (<div className="flex flex-col items-center justify-center py-24 border border-white/5 rounded-2xl">
           <p className="text-6xl mb-6">♡</p>
           <h2 className="text-white text-xl font-bold mb-2">No favorites yet</h2>
           <p className="text-gray-500 text-sm mb-8 text-center max-w-sm">
@@ -89,7 +87,7 @@ export default function FavoritesPage() {
               Browse Teams
             </Link>
           </div>
-        </div>
+        </div>)
 
       ) : (
         <div className="space-y-12">
@@ -142,7 +140,6 @@ export default function FavoritesPage() {
 
         </div>
       )}
-
       {/* Driver modal */}
       <DriverModal
         driver={selected}
@@ -151,7 +148,6 @@ export default function FavoritesPage() {
           refresh();
         }}
       />
-
       {/* Team modal*/}
       <TeamModal
         team={selectedTeam}
@@ -161,7 +157,6 @@ export default function FavoritesPage() {
           refresh();
         }}
       />
-
     </main>
   );
 }

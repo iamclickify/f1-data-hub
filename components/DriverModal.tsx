@@ -121,7 +121,10 @@ export default function DriverModal({ driver, onClose, lastSessionKey }: Props) 
               height={140}
               className="object-contain w-auto h-auto"
               unoptimized
-            />
+              style={{
+                maxWidth: "100%",
+                height: "auto"
+              }} />
           ) : (
             <div className="w-32 h-32 rounded-full bg-white/5 flex items-center justify-center text-5xl">
               👤
